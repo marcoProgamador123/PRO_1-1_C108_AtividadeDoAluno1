@@ -12,13 +12,34 @@ tipIds = [4, 8, 12, 16, 20]
 
 # Defina uma função para contar os dedos
 def countFingers(image, hand_landmarks, handNo=0):
-    print()
-           
-    ####################################################
-
-        # ADICIONE O CÓDIGO AQUI
-
-    ####################################################
+    if hand_landmarks:
+        landmarks = hand_landmarks[handNo].landmark
+        fingers = []
+        #print(landmarks)
+        for lm_index in tipIds:
+            finger_tip_y = landmarks[lm_index].y
+            finger_boton_y = landmarks[lm_index-2].y
+            thumb_tip_x = landmarks[lm_index].x
+            thumb_boton_x = landmarks[lm_index-2].x
+            if lm_index != 4:
+                if finger_tip_y < finger_boton_y:
+                    fingers.append(1)
+                    print(f'o dedo com id {lm_index} está aberto')
+                if finger_tip_y > finger_boton_y:
+                    fingers.append(0)        
+                    print(f'o dedo com id {lm_index} foi fechado')
+            else:
+                if thumb_tip_x > thumb_boton_x:
+                    fingers.append(1)
+                    print(f'o polegar está aberto')
+                if thumb_tip_x < thumb_boton_x:
+                    fingers.append(0)
+                    print(f'o polegar está fechado')    
+                         
+        total_fingers = fingers.count(1)
+        text = f'dedos: {total_fingers}'
+        cv2.putText(image,text,(50,50),cv2.FONT_HERSHEY_SIMPLEX,1,(0,255,0),2)
+        
 
 # Defina uma função para 
 def drawHandLanmarks(image, hand_landmarks):
@@ -46,9 +67,7 @@ while True:
     drawHandLanmarks(image, hand_landmarks)
 
     # Obtenha a posição dos dedos da mão        
-    #########################
-    # ADICIONE O CÓDIGO AQUI
-    #########################
+    countFingers(image,hand_landmarks)
 
     cv2.imshow("Controlador de Midia", image)
 
